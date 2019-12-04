@@ -3,16 +3,12 @@ package Navigation;
 import java.util.List;
 import java.util.ArrayList;
 
-import LepinskiEngine.CoinType;
-import LepinskiEngine.GameState;
-import LepinskiEngine.ObstacleType;
-import LepinskiEngine.PlaceCoin;
-import LepinskiEngine.PlaceObstacle;
-import LepinskiEngine.PlayerHidingTeam;
-import LepinskiEngine.RectMaze;
+import LepinskiEngine.*;
 
 public class OurHidingTeam implements PlayerHidingTeam {
-
+	
+	
+	
 	@Override
 	public void startGame(List<ObstacleType> obs, List<CoinType> coins, RectMaze maze, GameState state) {
 		// TODO Auto-generated method stub

@@ -35,12 +35,8 @@ public class OurSearchingTeam implements PlayerSearchingTeam
         
         List<Command> commands = new ArrayList<Command>();
         
-        for (Robot bot : robotsAwaitingCommand) {
-            if (!strats.containsKey(bot.getID()))
-                strats.put(bot.getID(), assignStrategy(bot));
-            
-            commands.add(strats.get(bot.getID()).nextMove(bot,information,map));
-        }
+        for (Robot bot : robotsAwaitingCommand) 
+        	commands.add(strats.get(bot.getID()).nextMove(bot,information,map));
         
         //System.out.println("Commands get returned.");
         return commands;
