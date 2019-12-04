@@ -19,6 +19,7 @@ public class Map {
     //private 
     private ArrayList<ArrayList<Location>> map;
     private HashSet<Location> coins;
+    private HashSet<Location> diamonds;
     private HashMap<Integer,Location> robots;
     
     public Map(int maze_x, int maze_y, List<Robot> bots) {
@@ -45,8 +46,11 @@ public class Map {
             int x = loc.getX();
             int y = loc.getY();
             
-            if (loc.getCoins() != null && !loc.getCoins().isEmpty())
+            if (loc.getCoins() != null && !loc.getCoins().isEmpty()) {
                 coins.add(loc);
+                if (loc.getCoins().contains(CoinType.Diamond))
+                	diamonds.add(loc);
+            }
             
             if (loc.getRobots() != null) {
                 for (Robot bot : loc.getRobots())
