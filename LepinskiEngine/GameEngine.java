@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import Navigation.*;
 
+@SuppressWarnings("unused")
 public class GameEngine extends Application{
     final int NUM_TURNS = 40;
     final int NUM_GOLD = 20;
@@ -38,9 +39,14 @@ public class GameEngine extends Application{
 
     //You can Change TestTeam to be another class you create
     public GameEngine(){
-	the_team = new OurTeam();
-	other_team = new OurTeam();
+	the_team = new TestTeam();
+	other_team = new TestTeam();
 	execution = new StandardExecution();
+    }
+    
+    // Eclipse is being dumb so I need to include this to be able to run the program.
+    public static void main(String[] args) {
+    	launch(args);
     }
     
     public void start(Stage primaryStage){

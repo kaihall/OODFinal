@@ -5,19 +5,28 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class OurTeam implements PlayerTeam
+public class OurSearchingTeam implements PlayerSearchingTeam
 {
     GameState cur_state;
     HashMap<Integer,BotStrategy> strats;
     Map map;
     
-    public void startGame(List<Robot> bots, GameState state) {
-        //System.out.println("Starting game...");
+    public List<Robot> chooseRobots(GameState state) {
         cur_state = state;
+        
+        List<Robot> bots = new ArrayList<Robot>();
+        
+        bots.add(new Robot(ModelType.ScoutBot, 1));
+        bots.add(new Robot(ModelType.ScoutBot, 2));
+        bots.add(new Robot(ModelType.CoinBot, 1));
+        
         strats = new HashMap<Integer,BotStrategy>();
         for (Robot rob : bots)
             strats.put(rob.getID(), assignStrategy(rob));
+        
         map = new Map(cur_state.maze_size_x, cur_state.maze_size_y, bots);
+        
+        return bots;
     }
     
     public List<Command> requestCommands(List<Location> information, List<Robot> robotsAwaitingCommand, GameState state) {

@@ -16,6 +16,6 @@ package LepinskiEngine;
 // SLOW causes robots entering the location to skip their next turn 
 // Robots can enter the SLOW location without problem, 
 // but they are then not able to execute a command on the next turn 
-// This obstacle simulates sand, vegitation, or other obastacles that make it difficult to pass through the location
+// This obstacle simulates sand, vegetation, or other obstacles that make it difficult to pass through the location
 
 public enum ObstacleType {Dark, Stone, Slow}

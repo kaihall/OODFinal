@@ -26,18 +26,18 @@ public class ScoutBotStrategy2 extends BotStrategy
         int Ty = map.getBotLocation(bot).getY();
     
         //While the done condition remains false, a random target location is created in an unexplored cell
-        /*while(done == false){
+        while(done == false){
             while(map.getLabel(Tx,Ty)!= 0){
                 Tx = (int)(Math.random()* map.getMaxX());
                 Ty = (int)(Math.random()* map.getMaxY());
             }
     
             //The bot will then go in a random direction available to it until it reaches the target location
-            while ((xLoc!=Tx)&&(yLoc!=Ty)){*/
+            while ((xLoc!=Tx)&&(yLoc!=Ty)){
                 int randIndex = r.nextInt(cur_loc.getDirections().size());
                 DirType direx = cur_loc.getDirections().get(randIndex);
                 return new CommandMove(bot,direx);
-            /*}
+            }
                
                 //Checks if all cells have been changed to Scanned
                 int doneCtr=0;
@@ -54,8 +54,8 @@ public class ScoutBotStrategy2 extends BotStrategy
                 } else{
                     done = false;
                 }
-        }*/
+        }
         
-        //return new CommandMove(bot,DirType.South);
+        return new CommandMove(bot,DirType.South);
     }
 }

@@ -4,6 +4,7 @@ import LepinskiEngine.*;
 import java.util.List;
 import java.lang.Math.*;
 
+@SuppressWarnings("unused")
 public class CoinBotStrategy extends BotStrategy
 {
    public CoinBotStrategy() {
