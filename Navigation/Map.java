@@ -176,7 +176,16 @@ public class Map {
     }
     
     public boolean onCoin(Robot bot) {
-        return getBotLocation(bot).getCoins() != null && !getBotLocation(bot).getCoins().isEmpty();
+        return coins.contains(getBotLocation(bot));
+    }
+    
+    public boolean onDiamond(Robot bot) {
+    	return diamonds.contains(getBotLocation(bot));
+    }
+    
+    public void removeCoin(Location loc) {
+    	coins.remove(loc);
+    	diamonds.remove(loc);
     }
     
     public List<List<DirType>> coinPaths(Location here) {
@@ -209,46 +218,48 @@ public class Map {
      * Turns a Location into a Node and adds it to the Map.
      */
     private void addLocation(Location loc) {
-    	Node u = new Node();
-    	u.loc = loc;
-    	u.x = loc.getX();
-    	u.y = loc.getY();
-    	
-    	List<DirType> dirxns = loc.getDirections();
-    	
-    	// Set the Node's north neighbor
-    	if (dirxns.contains(DirType.North) && u.y > 0)
-    		u.north = map.get(u.x).get(u.y-1);
-    	else
-    		u.north = nil;
-    	
-    	// Set the Node's south neighbor
-    	if (dirxns.contains(DirType.South) && u.y < max_y)
-    		u.south = map.get(u.x).get(u.y+1);
-    	else
-    		u.south = nil;
-    	
-    	// Set the Node's east neighbor
-    	if (dirxns.contains(DirType.East) && u.x < max_x)
-    		u.east = map.get(u.x+1).get(u.y);
-    	else
-    		u.east = nil;
-    	
-    	// Set the Node's west neighbor
-    	if (dirxns.contains(DirType.West) && u.x > 0)
-    		u.west = map.get(u.x-1).get(u.y);
-    	else
-    		u.east = nil;
-    	
-    	
-    	// Add the new Node to the map.
-    	map.get(u.x).set(u.y,u);
-    	
-    	// Store the Location and its Node so that the Location can be used to access the Node.
-    	nodes.put(loc, u);
-    	
-    	// Create a new HashMap to store paths to/from the location
-    	paths.put(loc, new HashMap<Location,List<DirType>>());
+    	if (!nodes.containsKey(loc)) {
+    		Node u = new Node();
+	    	u.loc = loc;
+	    	u.x = loc.getX();
+	    	u.y = loc.getY();
+	    	
+	    	List<DirType> dirxns = loc.getDirections();
+	    	
+	    	// Set the Node's north neighbor
+	    	if (dirxns.contains(DirType.North) && u.y > 0)
+	    		u.north = map.get(u.x).get(u.y-1);
+	    	else
+	    		u.north = nil;
+	    	
+	    	// Set the Node's south neighbor
+	    	if (dirxns.contains(DirType.South) && u.y < max_y)
+	    		u.south = map.get(u.x).get(u.y+1);
+	    	else
+	    		u.south = nil;
+	    	
+	    	// Set the Node's east neighbor
+	    	if (dirxns.contains(DirType.East) && u.x < max_x)
+	    		u.east = map.get(u.x+1).get(u.y);
+	    	else
+	    		u.east = nil;
+	    	
+	    	// Set the Node's west neighbor
+	    	if (dirxns.contains(DirType.West) && u.x > 0)
+	    		u.west = map.get(u.x-1).get(u.y);
+	    	else
+	    		u.east = nil;
+	    	
+	    	
+	    	// Add the new Node to the map.
+	    	map.get(u.x).set(u.y,u);
+	    	
+	    	// Store the Location and its Node so that the Location can be used to access the Node.
+	    	nodes.put(loc, u);
+	    	
+	    	// Create a new HashMap to store paths to/from the location
+	    	paths.put(loc, new HashMap<Location,List<DirType>>());
+    	}
     }
     
     

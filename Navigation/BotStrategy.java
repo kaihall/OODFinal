@@ -19,6 +19,9 @@ public abstract class BotStrategy
             case CoinBot:
                 strats.add(new CoinBotStrategy());
                 break;
+            case GhostBot:
+            	strats.add(new GhostBotStrategy());
+            	break;
             default:
                 strats.add(new DummyStrategy());
                 break;

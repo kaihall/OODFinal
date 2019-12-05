@@ -18,7 +18,9 @@ public class OurSearchingTeam implements PlayerSearchingTeam
         
         bots.add(new Robot(ModelType.ScoutBot, 1));
         bots.add(new Robot(ModelType.ScoutBot, 2));
-        bots.add(new Robot(ModelType.CoinBot, 1));
+        bots.add(new Robot(ModelType.CoinBot, 3));
+        bots.add(new Robot(ModelType.VisionBot, 4));
+        bots.add(new Robot(ModelType.GhostBot, 5));
         
         strats = new HashMap<Integer,BotStrategy>();
         for (Robot rob : bots)
