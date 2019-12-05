@@ -13,9 +13,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import Navigation.*;
 
-@SuppressWarnings("unused")
+
 public class GameEngine extends Application{
     final int NUM_TURNS = 40;
     final int NUM_GOLD = 20;
@@ -42,11 +41,6 @@ public class GameEngine extends Application{
 	the_team = new TestTeam();
 	other_team = new TestTeam();
 	execution = new StandardExecution();
-    }
-    
-    // Eclipse is being dumb so I need to include this to be able to run the program.
-    public static void main(String[] args) {
-    	launch(args);
     }
     
     public void start(Stage primaryStage){
@@ -233,66 +227,66 @@ public class GameEngine extends Application{
     }
 
     void addRobots(List<Robot> robots){
-		MazeLocation startLoc = the_maze.getTeamStart();
-		
-		for (Robot bot : robots){
-		    MazeRobot new_bot = MazeRobotFactory.makeMazeRobot(bot.getModel(), bot.getID(), startLoc);
+	MazeLocation startLoc = the_maze.getTeamStart();
 	
-		    if (startLoc.getRobots() == null){
-			startLoc.setTheRobots(new ArrayList<MazeRobot>());
-		    }
-		    startLoc.getRobots().add(new_bot);
-		}
+	for (Robot bot : robots){
+	    MazeRobot new_bot = MazeRobotFactory.makeMazeRobot(bot.getModel(), bot.getID(), startLoc);
+
+	    if (startLoc.getRobots() == null){
+		startLoc.setTheRobots(new ArrayList<MazeRobot>());
+	    }
+	    startLoc.getRobots().add(new_bot);
+	}
 
     }
 
     Maze doTeamScan(){
-		List<MazeRobot> bots = getMazeRobots();
-		Maze scan_info = new Maze(the_maze.getMaxX(), the_maze.getMaxY());
-	
-		for(MazeRobot r : bots){
-		    r.doScan(the_maze, scan_info);
-		}
-		return scan_info;
+	List<MazeRobot> bots = getMazeRobots();
+	Maze scan_info = new Maze(the_maze.getMaxX(), the_maze.getMaxY());
+
+	for(MazeRobot r : bots){
+	    r.doScan(the_maze, scan_info);
+	}
+	return scan_info;
     }
 
     List<MazeRobot> getMazeRobots(){
-		int max_x = the_maze.getMaxX();
-		int max_y = the_maze.getMaxY();
-		List<MazeRobot> team_bots = new ArrayList<MazeRobot>();
-	
-		for(int i=0; i<max_x; i++){
-		    for(int j=0; j<max_y; j++){
-			List<MazeRobot> bots = the_maze.getLocation(i,j).getRobots();
-			if(bots != null){
-			    for(MazeRobot the_bot: bots){
-				team_bots.add(the_bot);
-			    }
-			}
+	int max_x = the_maze.getMaxX();
+	int max_y = the_maze.getMaxY();
+	List<MazeRobot> team_bots = new ArrayList<MazeRobot>();
+
+	for(int i=0; i<max_x; i++){
+	    for(int j=0; j<max_y; j++){
+		List<MazeRobot> bots = the_maze.getLocation(i,j).getRobots();
+		if(bots != null){
+		    for(MazeRobot the_bot: bots){
+			team_bots.add(the_bot);
 		    }
 		}
-		return team_bots;
+	    }
+	}
+	return team_bots;
     }
 
     List<Robot> getReadyRobots(){
-		List<Robot> ready_bots = new ArrayList<Robot>();
-		MazeRobot maz_bot;
-		ModelType the_model;
-		int the_id;
-	
-		for(Robot bot : team_bots){
-		    the_model = bot.getModel();
-		    the_id = bot.getID();
-		    maz_bot = the_maze.getRobot(the_id);
-		    if(maz_bot.ready == true){
-			ready_bots.add(new Robot(the_model, the_id));
-		    }
-		    else{
-			maz_bot.ready = true;
-		    }
-		}
-		    
-		return ready_bots;
+	List<Robot> ready_bots = new ArrayList<Robot>();
+	MazeRobot maz_bot;
+	ModelType the_model;
+	int the_id;
+
+	for(Robot bot : team_bots){
+	    the_model = bot.getModel();
+	    the_id = bot.getID();
+	    maz_bot = the_maze.getRobot(the_id);
+	    if(maz_bot.ready == true && maz_bot.getModel()!=ModelType.VisionBot){
+		ready_bots.add(new Robot(the_model, the_id));
+	    }
+	    else{
+		maz_bot.ready = true;
+	    }
+	}
+	    
+	return ready_bots;
     }
 
 }

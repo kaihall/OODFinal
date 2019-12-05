@@ -8,19 +8,19 @@ public class PlaceObstacle implements PlaceThing{
     private ObstacleType obstacle;
 
     public int getX(){
-    	return x;
+	return x;
     }
 
     public int getY(){
-    	return y;
+	return y;
     }
 
     public ObstacleType getObstacle(){
-    	return obstacle;
+	return obstacle;
     }
 
     public PlaceObstacle(ObstacleType ob, int x_val, int y_val){
-    	x = x_val;
+	x = x_val;
         y = y_val;
         obstacle = ob;
     }

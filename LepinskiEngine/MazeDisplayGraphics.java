@@ -141,6 +141,11 @@ public class MazeDisplayGraphics{
 	switch(model){
 	case ScoutBot: return new String("S");
 	case CoinBot:  return new String("C");
+	case FastBot:  return new String("F");
+	case EscortBot: return new String("E");
+	case BasicBot:  return new String("B");
+	case GhostBot:  return new String("G");
+	case VisionBot: return new String("V");
 	}    
 
 	return new String("?");

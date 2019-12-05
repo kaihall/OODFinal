@@ -4,7 +4,7 @@ import java.util.List;
 //stateGame is called once at the very start of the game
 
 //setObstacles is called once after startGame
-//The player team is given a list of Obstacles to place
+//The player team is given a list of Obatacles to place
 //You should return a PlaceObstacle object for each obstacle you wish to place
 
 //NOTE: You will be given exactly one STONE obstacle

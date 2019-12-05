@@ -1,6 +1,6 @@
 package LepinskiEngine;
 //A Robot's ID can be any integer
-//The ID is used to distinguish between robots with the same Model
+//The ID is used to distinguish betwen robots with the same Model
 
 public class Robot{
     ModelType model;

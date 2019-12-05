@@ -15,8 +15,8 @@ public class TestTeam implements PlayerSearchingTeam, PlayerHidingTeam{
     public List<Robot> chooseRobots(GameState state){
 	cur_state = state;
 	ArrayList<Robot> bots = new ArrayList<Robot>();
-	bots.add(new Robot(ModelType.CoinBot, 1));
-	bots.add(new Robot(ModelType.BasicBot, 2));
+	bots.add(new Robot(ModelType.ScoutBot, 1));
+	bots.add(new Robot(ModelType.FastBot, 2));
        
 	return bots;
     }
@@ -26,19 +26,18 @@ public class TestTeam implements PlayerSearchingTeam, PlayerHidingTeam{
 	List<Command> the_coms = new ArrayList<Command>();
 
 	for(Robot bot : robotsAwaitingCommand){
-	    if(bot.getModel() == ModelType.CoinBot){
+	    if(bot.getModel() == ModelType.ScoutBot){
 		Command com = new CommandMove(bot, DirType.West);
 		the_coms.add(com);
 	    }
-	    if(bot.getModel() == ModelType.BasicBot){
+	    if(bot.getModel() == ModelType.FastBot){
 		Command com1 = new CommandMove(bot, DirType.East);
 	        Command com2 = new CommandMove(bot, DirType.South);
-		the_coms.add(com1);
+		the_coms.add(new CommandFastMove(bot, com1, com2));
 	    }
 	}
 
 	return the_coms;
-
     }
 
     public void startGame(List<ObstacleType> obs, List<CoinType> coins, RectMaze maze, GameState state)

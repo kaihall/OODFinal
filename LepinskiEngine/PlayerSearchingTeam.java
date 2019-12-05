@@ -10,6 +10,7 @@ import java.util.List;
 //requestCommands is called each turn
 //This function should return one Command for each robot awaiting command
 //A robot who loses its turn due to a SLOW trap will not be including in the list
+//A VisionBot will not be included in this list (since it never moves)
 
 public interface PlayerSearchingTeam{
     public List<Robot> chooseRobots(GameState state); 
