@@ -20,7 +20,7 @@ public class Map {
     private int[][] labels;
     private ArrayList<ArrayList<Node>> map;
     private HashMap<Location,Node> nodes;
-    private HashMap<Location,HashMap<Location,ArrayList<DirType>>> paths;	// we use findPath() a lot so this is an effort to reduce complexity.
+    private HashMap<Location,HashMap<Location,List<DirType>>> paths;	// we use findPath() a lot so this is an effort to reduce complexity.
     
     private HashSet<Location> coins;
     private HashSet<Location> diamonds;
@@ -55,7 +55,7 @@ public class Map {
         }
         
         nodes = new HashMap<Location,Node>();
-        paths = new HashMap<Location,HashMap<Location,ArrayList<DirType>>>();
+        paths = new HashMap<Location,HashMap<Location,List<DirType>>>();
         
         coins = new HashSet<Location>();
         diamonds = new HashSet<Location>();
@@ -99,8 +99,7 @@ public class Map {
     	if (paths.get(here).containsKey(there)) {
     		return paths.get(here).get(there);
     	} else if (paths.get(there).containsKey(here)) {
-    		ArrayList<DirType> tmp = new ArrayList<DirType>(paths.get(there).get(here));
-    		Collections.reverse(tmp);
+    		List<DirType> tmp = reversePath(paths.get(there).get(here));
     		paths.get(here).put(there,tmp);
     		return tmp;
     	} else {
@@ -120,6 +119,35 @@ public class Map {
         path.add(DirType.South);
         
         return path;
+    }
+    
+    /*
+     * Takes a path from point A to point B and turns it into a path from point B to point A.
+     */
+    private List<DirType> reversePath(List<DirType> oldPath) {
+    	// Start a new path.
+    	List<DirType> newPath = new ArrayList<DirType>();
+    	
+    	// Starting at the end of the path, work backwards and add the opposite direction to the new path at each step.
+    	for (int i = oldPath.size()-1; i >= 0; i--) {
+    		switch (oldPath.get(i)) {
+    		case North:
+    			newPath.add(DirType.South);
+    			break;
+    		case South:
+    			newPath.add(DirType.North);
+    			break;
+    		case East:
+    			newPath.add(DirType.West);
+    			break;
+    		case West:
+    			newPath.add(DirType.East);
+    			break;
+    		}
+    	}
+    	
+    	//Return the new path.
+    	return newPath;
     }
     
     public int getLabel(Location loc) {
@@ -220,7 +248,7 @@ public class Map {
     	nodes.put(loc, u);
     	
     	// Create a new HashMap to store paths to/from the location
-    	paths.put(loc, new HashMap<Location,ArrayList<DirType>>());
+    	paths.put(loc, new HashMap<Location,List<DirType>>());
     }
     
     
