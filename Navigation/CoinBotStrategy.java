@@ -15,9 +15,9 @@ public class CoinBotStrategy extends BotStrategy
     private float weightDecision(Location loc, Map m){
         int count = 0;
         float criticalval = (m.getMaxX() + m.getMaxY())/2/5.0f;
-        List<List<Location>> coins = m.coinPaths(loc);
-        for(List<Location> lstloc : coins){
-            if(lstloc.get(lstloc.size()-1).getX() - loc.getX() < criticalval && lstloc.get(lstloc.size()-1).getY() - loc.getY() < criticalval){
+        List<Location> coins = m.getCoinLocations();
+        for(Location c : coins){
+            if(Math.abs(c.getX() - loc.getX()) < criticalval && Math.abs(c.getY() - loc.getY()) < criticalval){
                 count += 1;
             }
         }   
@@ -27,29 +27,21 @@ public class CoinBotStrategy extends BotStrategy
    public Command nextMove(Robot bot, List<Location> cur_vision, Map map) {
        map.update(cur_vision);
        int currentmin = 50;
-       List<Location> retlist = cur_vision; //initializes it to a list that will at least give you a location to go to
+       List<DirType> retlist = map.getBotLocation(bot).getDirections(); //initializes it to a list that will at least give you a location to go to
        DirType direction;
-       if(map.onCoin(bot) != false){
+       if(map.onCoin(bot)){
            return new CommandCoin(bot); //I believe this is correct for picking up the coin?
        }
        else{
-           for(List<Location> lloc : map.coinPaths(map.getBotLocation(bot))){
-               float weightedlength = weightDecision(lloc.get(lloc.size()-1), map) * lloc.size();
-               if(weightedlength < currentmin){
-                    currentmin = lloc.size();
-                    retlist = lloc;
+           for(Location c : map.getCoinLocations()){
+        	   List<DirType> pathTo = map.getPath(map.getBotLocation(bot), c);
+               float weightedlength = weightDecision(c, map) * pathTo.size();
+               if(weightedlength < currentmin) {
+            	   	currentmin = pathTo.size();
+                    retlist = map.getPath(map.getBotLocation(bot), c);
                }
            }
-           Location nextsquare = retlist.get(0);
-           if(nextsquare.getX() == map.getBotLocation(bot).getX()+1)
-               direction = DirType.East;
-           else if(nextsquare.getX() == map.getBotLocation(bot).getX() - 1)
-                direction = DirType.West;
-           else if(nextsquare.getY() == map.getBotLocation(bot).getX() - 1)
-                direction = DirType.North;
-           else{
-                direction = DirType.South;
-           }
+           direction = retlist.get(0);
        }
        return new CommandMove(bot, direction);
    }
