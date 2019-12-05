@@ -13,6 +13,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import Navigation.*;
 
 
 public class GameEngine extends Application{
@@ -35,10 +36,14 @@ public class GameEngine extends Application{
     boolean is_done;
     CommandExecution execution;
     Canvas maze_canvas;
-
+    
+    public static void main (String[] args) {
+    	launch(args);
+    }
+    
     //You can Change TestTeam to be another class you create
     public GameEngine(){
-	the_team = new TestTeam();
+	the_team = new OurSearchingTeam();
 	other_team = new TestTeam();
 	execution = new StandardExecution();
     }
