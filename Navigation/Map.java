@@ -19,12 +19,11 @@ public class Map {
     private int max_x, max_y;
     private int[][] labels;
     private ArrayList<ArrayList<Node>> map;
-    private HashMap<Location,Node> nodes;
-    private HashMap<Location,HashMap<Location,List<DirType>>> paths;	// we use findPath() a lot so this is an effort to reduce complexity.
+    private HashMap<Node,HashMap<Node,List<DirType>>> paths;	// we use findPath() a lot so this is an effort to reduce complexity.
     
-    private HashSet<Location> coins;
-    private HashSet<Location> diamonds;
-    private HashMap<Integer,Location> robots;
+    private HashSet<Node> coins;
+    private HashSet<Node> diamonds;
+    private HashMap<Integer,Node> robots;
     
     private final Node nil = new Node();
     
@@ -54,12 +53,11 @@ public class Map {
             }
         }
         
-        nodes = new HashMap<Location,Node>();
-        paths = new HashMap<Location,HashMap<Location,List<DirType>>>();
+        paths = new HashMap<Node,HashMap<Node,List<DirType>>>();
         
-        coins = new HashSet<Location>();
-        diamonds = new HashSet<Location>();
-        robots = new HashMap<Integer,Location>();
+        coins = new HashSet<Node>();
+        diamonds = new HashSet<Node>();
+        robots = new HashMap<Integer,Node>();
     }
     
     /*
@@ -70,25 +68,26 @@ public class Map {
             int x = loc.getX();
             int y = loc.getY();
             
+            if (labels[x][y] == UNSCANNED) {
+                labels[x][y] = SCANNED;
+                addLocation(loc);
+            }
+            
+            if (deadEnd(loc))
+            	labels[x][y] = DEAD_END;
+            
             if (loc.getCoins() != null && !loc.getCoins().isEmpty()) {
-                coins.add(loc);
+                coins.add(toNode(loc));
                 if (loc.getCoins().contains(CoinType.Diamond))
-                	diamonds.add(loc);
+                	diamonds.add(toNode(loc));
             }
             
             if (loc.getRobots() != null) {
                 for (Robot bot : loc.getRobots())
-                    robots.put(bot.getID(),loc);
+                    robots.put(bot.getID(),toNode(loc));
                 if (labels[x][y] < VISITED) labels[x][y] = VISITED;
             }
-                
-            addLocation(loc);
-            
-            if (labels[x][y] == UNSCANNED)
-                labels[x][y] = SCANNED;
-            
-            if (deadEnd(loc))
-            	labels[x][y] = DEAD_END;
+               
         }
     }
     
@@ -96,24 +95,27 @@ public class Map {
      * Gets the stored path or attempts to find one if there is none.
      */
     public List<DirType> getPath(Location here, Location there) {
-    	if (paths.get(here).containsKey(there)) {
-    		return paths.get(here).get(there);
-    	} else if (paths.get(there).containsKey(here)) {
-    		List<DirType> tmp = reversePath(paths.get(there).get(here));
-    		paths.get(here).put(there,tmp);
+    	Node h = toNode(here);
+    	Node t = toNode(there);
+    	
+    	if (paths.get(h).containsKey(t)) {
+    		return paths.get(h).get(t);
+    	} else if (paths.get(t).containsKey(h)) {
+    		List<DirType> tmp = reversePath(paths.get(t).get(h));
+    		paths.get(h).put(t,tmp);
     		return tmp;
     	} else {
-    		return findPath(here, there);
+    		return findPath(h, t);
     	}
     }
     
     /*
      * Uses BFS to find, store, and return the shortest path between two Locations.
      */
-    private List<DirType> findPath(Location here, Location there) {
+    private List<DirType> findPath(Node here, Node there) {
         List<DirType> path = new ArrayList<DirType>();
         
-        Node start = nodes.get(here);
+        Node start = here;
         
         // TODO: stubbed
         path.add(DirType.South);
@@ -172,37 +174,52 @@ public class Map {
     }
     
     public Location getBotLocation(Robot bot) {
-        return robots.get(bot.getID());
+        return robots.get(bot.getID()).loc;
     }
     
     public boolean onCoin(Robot bot) {
-        return coins.contains(getBotLocation(bot));
+        return coins.contains(robots.get(bot.getID()));
     }
     
     public boolean onDiamond(Robot bot) {
-    	return diamonds.contains(getBotLocation(bot));
+    	return diamonds.contains(robots.get(bot.getID()));
     }
     
     public void removeCoin(Location loc) {
-    	coins.remove(loc);
-    	diamonds.remove(loc);
+    	coins.remove(toNode(loc));
+    	diamonds.remove(toNode(loc));
+    }
+    
+    public void removeCoin(Robot bot) {
+    	coins.remove(robots.get(bot.getID()));
+    	diamonds.remove(robots.get(bot.getID()));
     }
     
     public List<List<DirType>> coinPaths(Location here) {
         List<List<DirType>> paths = new ArrayList<List<DirType>>();
         
-        for (Location loc : coins)
-            paths.add(findPath(here,loc));
+        for (Node u : coins)
+            paths.add(findPath(toNode(here),u));
         
         return paths;
     }
     
     public List<Location> getCoinLocations() {
-    	return new ArrayList<Location>(coins);
+    	ArrayList<Location> cL = new ArrayList<Location>();
+    	
+    	for (Node u : coins)
+    		cL.add(u.loc);
+    	
+    	return cL;
     }
     
     public List<Location> getDiamondLocations() {
-    	return new ArrayList<Location>(diamonds);
+    	ArrayList<Location> dL = new ArrayList<Location>();
+    	
+    	for (Node u : diamonds)
+    		dL.add(u.loc);
+    	
+    	return dL;
     }
     
     public int getMaxX() {
@@ -213,55 +230,57 @@ public class Map {
         return max_y;
     }
     
+    public Location get(int x, int y) {
+    	return map.get(x).get(y).loc;
+    }
     
     /*
      * Turns a Location into a Node and adds it to the Map.
      */
     private void addLocation(Location loc) {
-    	if (!nodes.containsKey(loc)) {
-    		Node u = new Node();
-	    	u.loc = loc;
-	    	u.x = loc.getX();
-	    	u.y = loc.getY();
-	    	
-	    	List<DirType> dirxns = loc.getDirections();
-	    	
-	    	// Set the Node's north neighbor
-	    	if (dirxns.contains(DirType.North) && u.y > 0)
-	    		u.north = map.get(u.x).get(u.y-1);
-	    	else
-	    		u.north = nil;
-	    	
-	    	// Set the Node's south neighbor
-	    	if (dirxns.contains(DirType.South) && u.y < max_y)
-	    		u.south = map.get(u.x).get(u.y+1);
-	    	else
-	    		u.south = nil;
-	    	
-	    	// Set the Node's east neighbor
-	    	if (dirxns.contains(DirType.East) && u.x < max_x)
-	    		u.east = map.get(u.x+1).get(u.y);
-	    	else
-	    		u.east = nil;
-	    	
-	    	// Set the Node's west neighbor
-	    	if (dirxns.contains(DirType.West) && u.x > 0)
-	    		u.west = map.get(u.x-1).get(u.y);
-	    	else
-	    		u.east = nil;
-	    	
-	    	
-	    	// Add the new Node to the map.
-	    	map.get(u.x).set(u.y,u);
-	    	
-	    	// Store the Location and its Node so that the Location can be used to access the Node.
-	    	nodes.put(loc, u);
-	    	
-	    	// Create a new HashMap to store paths to/from the location
-	    	paths.put(loc, new HashMap<Location,List<DirType>>());
-    	}
+		Node u = new Node();
+    	u.loc = loc;
+    	u.x = loc.getX();
+    	u.y = loc.getY();
+    	
+    	List<DirType> dirxns = loc.getDirections();
+    	
+    	// Set the Node's north neighbor
+    	if (dirxns.contains(DirType.North) && u.y > 0)
+    		u.north = map.get(u.x).get(u.y-1);
+    	else
+    		u.north = nil;
+    	
+    	// Set the Node's south neighbor
+    	if (dirxns.contains(DirType.South) && u.y < max_y)
+    		u.south = map.get(u.x).get(u.y+1);
+    	else
+    		u.south = nil;
+    	
+    	// Set the Node's east neighbor
+    	if (dirxns.contains(DirType.East) && u.x < max_x)
+    		u.east = map.get(u.x+1).get(u.y);
+    	else
+    		u.east = nil;
+    	
+    	// Set the Node's west neighbor
+    	if (dirxns.contains(DirType.West) && u.x > 0)
+    		u.west = map.get(u.x-1).get(u.y);
+    	else
+    		u.east = nil;
+    	
+    	
+    	// Add the new Node to the map.
+    	map.get(u.x).set(u.y,u);
+    	
+    	// Create a new HashMap to store paths to/from the Node
+    	paths.put(u, new HashMap<Node,List<DirType>>());
     }
     
+    private Node toNode(Location loc) {
+    	Node u = map.get(loc.getX()).get(loc.getY());
+    	return u;
+    }
     
     /*
      * Determines if a Location is a dead end.
