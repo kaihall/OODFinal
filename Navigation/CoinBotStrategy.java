@@ -7,6 +7,8 @@ import java.lang.Math.*;
 @SuppressWarnings("unused")
 public class CoinBotStrategy extends BotStrategy
 {
+    
+    private int favorUnknown;
    public CoinBotStrategy() {
     }
 
@@ -34,7 +36,10 @@ public class CoinBotStrategy extends BotStrategy
        }
        else{
            for(Location c : map.getCoinLocations()){
-        	   List<DirType> pathTo = map.getPath(map.getBotLocation(bot), c);
+              List<DirType> pathTo = map.getPath(map.getBotLocation(bot), c);
+               boolean unknownPreference = false; //CHANGE THIS TO CHANGE UNKNOWN PREFERENCE
+               setUnknownPref(unknownPreference);
+               int finalsize = unknownWeighting(bot, map, pathTo, c, unknownPreference);
                float weightedlength = weightDecision(c, map) * pathTo.size();
                if(weightedlength < currentmin) {
             	   	currentmin = pathTo.size();
@@ -45,4 +50,70 @@ public class CoinBotStrategy extends BotStrategy
        }
        return new CommandMove(bot, direction);
    }
+
+   //sets the coinbot's logic-- is it trying to seek unknown paths?
+   public void setUnknownPref(boolean b){
+    if(b == true) 
+        favorUnknown = 0;
+    else 
+        favorUnknown = 1;
+   }
+
+   public int getUnknownPref(){
+       return favorUnknown;
+   }
+
+    private int unknownWeighting(Robot bot, Map map, List<DirType> dir, Location coinloc, boolean unknownBehav){
+        setUnknownPref(unknownBehav);
+        int unknownVal = getUnknownPref();
+        int focusX = map.getBotLocation(bot).getX();
+        int focusY = map.getBotLocation(bot).getY();
+        for(DirType d : dir){
+        if(d == DirType.East)
+            focusX += 1;
+        if(d == DirType.West)
+            focusX -= 1;
+        if(d == DirType.South)
+            focusY += 1;
+        if(d == DirType.North)
+            focusY -= 1;
+        }
+        int xdiff = coinloc.getX() - focusX;
+        int ydiff = coinloc.getY() - focusY;
+        if(xdiff == 0 && ydiff == 0)
+            return dir.size();
+        else{
+            boolean furtherInX;
+            while(xdiff != 0 && ydiff != 0){
+                if(Math.abs(xdiff) > Math.abs(ydiff))
+                    furtherInX = true;
+                else
+                    furtherInX = false;
+                if(furtherInX){
+                    if(xdiff > 0){
+                        focusX += 1;
+                        xdiff -= 1;
+                    }
+                    else{
+                        focusX -= 1;
+                        xdiff += 1;
+                    }
+                    
+                }
+                else{
+                    if(ydiff > 0){
+                        focusY += 1;
+                        ydiff -= 1;
+                    }
+                    else{
+                        focusY -= 1;
+                        ydiff += 1;
+                    }
+                }
+                if(map.getLabel(map.get(focusX, focusY)) == 0)
+                    unknownVal += unknownVal;
+            }
+            return dir.size() + unknownVal;
+        }
+}
 }
