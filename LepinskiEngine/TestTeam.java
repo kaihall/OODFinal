@@ -17,7 +17,10 @@ public class TestTeam implements PlayerSearchingTeam, PlayerHidingTeam{
 	ArrayList<Robot> bots = new ArrayList<Robot>();
 	bots.add(new Robot(ModelType.ScoutBot, 1));
 	bots.add(new Robot(ModelType.FastBot, 2));
-       
+	bots.add(new Robot(ModelType.FastBot, 3));
+	bots.add(new Robot(ModelType.BasicBot, 4));
+	bots.add(new Robot(ModelType.BasicBot, 5));
+	
 	return bots;
     }
 
@@ -63,7 +66,7 @@ public class TestTeam implements PlayerSearchingTeam, PlayerHidingTeam{
 		x = x + 1;
 	    }
 	}
-	
+
 	return placements;
     }
 

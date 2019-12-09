@@ -33,8 +33,8 @@ public class MazeDisplayGraphics{
 	int max_x = the_maze.getMaxX();
 	int max_y = the_maze.getMaxY();
 	gc = can.getGraphicsContext2D();
-	BOX_WIDE = 60;
-	BOX_TALL = 60;
+	BOX_WIDE = 55;
+	BOX_TALL = 55;
 	FONT_SIZE = 40;
 	gc.setLineWidth(1.5);
 	
@@ -91,20 +91,22 @@ public class MazeDisplayGraphics{
     }
 
     static void displayRobots(List<MazeRobot> bots, double x, double y){
+	int dx = 15;
+	int dy = 35; 
 	gc.setFont(Font.font(FONT_SIZE));
         gc.setFill(Color.BLUE);
-	gc.fillText(robotSymb(bots.get(0)),x+10, y+35);
+	gc.fillText(robotSymb(bots.get(0)),x+dx, y+dy);
 	if(bots.size() > 1){
 		gc.setStroke(Color.BLACK);
 		gc.setLineWidth(3.0);
-		gc.strokeText(robotSymb(bots.get(0)),x+10, y+35);
+		gc.strokeText(robotSymb(bots.get(0)),x+dx, y+dy);
 		gc.setLineWidth(1.5);
 	    }
     }
 
     static void displayCoins(List<CoinType> coins, double x, double y){
 	int dx = 5;
-	int dy = 42;
+	int dy = 40;
 	gc.setStroke(Color.BLACK);
 	
 	for(CoinType c : coins){
