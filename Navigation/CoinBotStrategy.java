@@ -110,7 +110,7 @@ public class CoinBotStrategy extends BotStrategy
                         ydiff += 1;
                     }
                 }
-                if(map.getLabel(map.get(focusX, focusY)) == 0)
+                if(map.getLabel(focusX, focusY) == 0)
                     unknownVal += unknownVal;
             }
             return dir.size() + unknownVal;
