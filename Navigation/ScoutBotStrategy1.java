@@ -53,16 +53,16 @@ public class ScoutBotStrategy1 extends BotStrategy
         
         switch (dirxn) {
             case North:
-                yCheck = -3;
+                yCheck = -4;
                 break;
             case South:
-                yCheck = 3;
+                yCheck = 4;
                 break;
             case East:
-                xCheck = -3;
+                xCheck = -4;
                 break;
             case West:
-                xCheck = 3;
+                xCheck = 4;
                 break;
         }        
         
