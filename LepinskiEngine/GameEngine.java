@@ -1,7 +1,7 @@
 package LepinskiEngine;
 import java.util.List;
 
-import Navigation.OurSearchingTeam;
+import Navigation.*;
 
 import java.util.ArrayList;
 import javafx.util.Duration;
@@ -42,7 +42,7 @@ public class GameEngine extends Application{
     //You can Change TestTeam to be another class you create
     public GameEngine(){
 	the_team = new OurSearchingTeam();
-	other_team = new TestTeam();
+	other_team = new RandomHidingTeam();
 	execution = new StandardExecution();
     }
     
@@ -76,7 +76,8 @@ public class GameEngine extends Application{
 	int x = the_maze.getMaxX();
 	int y = the_maze.getMaxY();
 	state = new GameState(x, y, NUM_TURNS, 0, NUM_GOLD + NUM_DIAMOND);
-
+	
+	//other_team.startGame(new ArrayList<ObstacleType>(), new ArrayList<CoinType>(), temp_maze, state);
 	initObstacles(temp_maze);
 	initCoins(temp_maze);
 	
