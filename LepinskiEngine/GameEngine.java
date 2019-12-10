@@ -1,5 +1,8 @@
 package LepinskiEngine;
 import java.util.List;
+
+import Navigation.OurSearchingTeam;
+
 import java.util.ArrayList;
 import javafx.util.Duration;
 import javafx.animation.Timeline;
@@ -38,7 +41,7 @@ public class GameEngine extends Application{
 
     //You can Change TestTeam to be another class you create
     public GameEngine(){
-	the_team = new TestTeam();
+	the_team = new OurSearchingTeam();
 	other_team = new TestTeam();
 	execution = new StandardExecution();
     }
