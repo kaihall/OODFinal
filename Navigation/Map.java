@@ -341,34 +341,7 @@ public class Map {
         }  
         
         if (path.isEmpty()) {
-        	DirType dir = null;
-        	if (there.x > here.x && here.east != nil)
-        		dir = DirType.East;
-        	else if (there.x < here.x && here.west != nil)
-        		dir = DirType.West;
-        	else if (there.y > here.y && here.north != nil)
-        		dir = DirType.North;
-        	else
-        		dir = DirType.South;
-        	/*
-        	if (dir == null) {
-        		List<DirType> dirxns = new ArrayList<DirType>();
-        		Random rand = new Random();
-        		
-        		if (here.north != nil) dirxns.add(DirType.North);
-        		if (here.south != nil) dirxns.add(DirType.South);
-        		if (here.east != nil) dirxns.add(DirType.East);
-        		if (here.west != nil) dirxns.add(DirType.West);
-        		
-        		if (dirxns.isEmpty()) {
-        			dir = DirType.East;
-        		} else {
-	        		int i = rand.nextInt(dirxns.size());
-	        		dir = dirxns.get(i);
-        		}
-        	}
-        	*/
-        	path.add(dir);
+        	return crappyPath(here,there);
         }
         
         return path;
@@ -398,6 +371,9 @@ public class Map {
         return toDirPath(path);
     }
     
+    /*
+     * Takes a path of Nodes and turns it into a path of DirTypes.
+     */
     private List<DirType> toDirPath(List<Node> path) {
     	
     	List<DirType> dirPath = new ArrayList<DirType>();
@@ -481,6 +457,7 @@ public class Map {
     	Node n = (u.y > 0) ? map.get(u.x).get(u.y-1) : null;
     	if (dirxns.contains(DirType.North) && n != null) {
     		u.north = n;
+    		n.south = u;
     		u.adj.add(n);
     	} else
     		u.north = nil;
@@ -489,6 +466,7 @@ public class Map {
     	Node s = (u.y < max_y) ? map.get(u.x).get(u.y+1) : null;
     	if (dirxns.contains(DirType.South) && s != null) {
     		u.south = s;
+    		s.north = u;
     		u.adj.add(s);
     	} else
     		u.south = nil;
@@ -497,6 +475,7 @@ public class Map {
     	Node e = (u.x < max_x) ? map.get(u.x+1).get(u.y) : null;
     	if (dirxns.contains(DirType.East) && e != null) {
     		u.east = e;
+    		e.west = u;
     		u.adj.add(e);
     	} else
     		u.east = nil;
@@ -505,6 +484,7 @@ public class Map {
     	Node w = (u.x > 0) ? map.get(u.x-1).get(u.y) : null;
     	if (dirxns.contains(DirType.West) && w != null) {
     		u.west = w;
+    		w.east = u;
     		u.adj.add(w);
     	} else
     		u.west = nil;
@@ -549,5 +529,40 @@ public class Map {
             //if all directions are dead ends or all but one are, this location is also a dead end
             return deadEnds >= dirxns.size()-1;
         }
+    }
+
+    private List<DirType> crappyPath(Node here, Node there) {
+    	List<DirType> path = new ArrayList<DirType>();
+    	
+    	DirType dir = null;
+    	if (there.x > here.x && here.east != nil)
+    		dir = DirType.East;
+    	else if (there.x < here.x && here.west != nil)
+    		dir = DirType.West;
+    	else if (there.y > here.y && here.north != nil)
+    		dir = DirType.North;
+    	else
+    		dir = DirType.South;
+    	/*
+    	if (dir == null) {
+    		List<DirType> dirxns = new ArrayList<DirType>();
+    		Random rand = new Random();
+    		
+    		if (here.north != nil) dirxns.add(DirType.North);
+    		if (here.south != nil) dirxns.add(DirType.South);
+    		if (here.east != nil) dirxns.add(DirType.East);
+    		if (here.west != nil) dirxns.add(DirType.West);
+    		
+    		if (dirxns.isEmpty()) {
+    			dir = DirType.East;
+    		} else {
+        		int i = rand.nextInt(dirxns.size());
+        		dir = dirxns.get(i);
+    		}
+    	}
+    	*/
+    	path.add(dir);
+    	
+    	return path;
     }
 }
