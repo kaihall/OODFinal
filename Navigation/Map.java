@@ -44,6 +44,14 @@ public class Map {
     	public boolean visited;
     	public Node parent;
     	public List<Node> adj;
+    	
+    	public boolean equals(Node u) {
+    		return this.x == u.x && this.y == u.y;
+    	}
+    	
+    	public String toString() {
+    		return "[" + this.x + ", " + this.y + "]";
+    	}
     }
     
     public Map(int maze_x, int maze_y, List<Robot> bots) {
@@ -203,114 +211,52 @@ public class Map {
     	}
     	*/
     	
+<<<<<<< Updated upstream
     	List<DirType> path = findPath(h,t);
     	
     	//if (path.isEmpty())
     	//	path = crappyPath(h,t);
     	
     	return path;
+=======
+    	//return toDirPath(findPathRecursion(h,t,null));
+    	return findPath(h,t);
+>>>>>>> Stashed changes
     }
     
     /*
-     * Uses recursion to find, store, and return the shortest path between two Locations.
+     * Uses recursion to find and return the shortest path between two Locations.
      */
-    private List<DirType> findPathRecursion(Node here, Node there, List<Node> pathList) {
-        pathList.add(here);
+    private List<Node> findPathRecursion(Node here, Node there, Node from) {
+        if (from == null)
+        	removeVisited();
+    	
+        here.visited = true;
         
-        if (!paths.containsKey(here))
-        	paths.put(pathList.get(0), new HashMap<Node,List<DirType>>());	
-        paths.get(pathList.get(0)).put(here,toDirPath(pathList));
+        List<Node> path = new ArrayList<Node>();
         
-        List<DirType> n = new ArrayList<DirType>();
-        List<DirType> s = new ArrayList<DirType>();
-        List<DirType> e = new ArrayList<DirType>();
-        List<DirType> w = new ArrayList<DirType>();
-        
-        if (here.north != null) {
-	        if (here.north == there) {
-	        	pathList.add(here.north);
-	        	return toDirPath(pathList);
-	        } else {
-	        	n = findPathRecursion(here.north,there,pathList);
-	        }
+        if (here.equals(there)) {
+        	path.add(here);
+        	return path;
         }
         
-        if (here.south != null) {
-	        if (here.south == there) {
-	        	pathList.add(here.south);
-	        	return toDirPath(pathList);
-	        } else {
-	        	s = findPathRecursion(here.south,there,pathList);
-	        }
-        }
-        
-        if (here.east != null) {
-        	if (here.east == there) {
-            	pathList.add(here.east);
-            	return toDirPath(pathList);
-            } else {
-            	e = findPathRecursion(here.east,there,pathList);
-            }
-        }
-        
-        if (here.west != null) {
-	        if (here.west == there) {
-	        	pathList.add(here.west);
-	        	return toDirPath(pathList);
-	        } else {
-	            w = findPathRecursion(here.west,there,pathList);
-	        }
-        }
-        
-        List<DirType> shortest = new ArrayList<DirType>();
-        
-        if (shortest.size() == 0 || (n.size() != 0 && n.size() < shortest.size()))
-        	shortest = n;
-        if (shortest.size() == 0 || (s.size() != 0 && s.size() < shortest.size()))
-        	shortest = s;
-        if (shortest.size() == 0 || (e.size() != 0 && e.size() < shortest.size()))
-        	shortest = e;
-        if (shortest.size() == 0 || (w.size() != 0 && w.size() < shortest.size()))
-        	shortest = w;
-        
-        //Adds a type 1000 times to discourage going in random directions
-        if (shortest.isEmpty()) {
-        	DirType dir = null;
-        	if (there.x > here.x && here.east != nil)
-        		dir = DirType.East;
-        	else if (there.x < here.x && here.west != nil)
-        		dir = DirType.West;
-        	else if (there.y > here.y && here.north != nil)
-        		dir = DirType.North;
-        	else if (there.y < here.y && here.south != nil)
-        		dir = DirType.South;
-        	
-        	if (dir == null) {
-        		List<DirType> dirxns = new ArrayList<DirType>();
-        		Random rand = new Random();
-        		
-        		if (here.north != nil) dirxns.add(DirType.North);
-        		if (here.south != nil) dirxns.add(DirType.South);
-        		if (here.east != nil) dirxns.add(DirType.East);
-        		if (here.west != nil) dirxns.add(DirType.West);
-        		
-        		if (dirxns.isEmpty()) {
-        			dir = DirType.East;
-        		} else {
-	        		int i = rand.nextInt(dirxns.size());
-	        		dir = dirxns.get(i);
+        for (Node u : here.adj) {
+        	if (!u.visited) {
+        		u.visited = true;
+        		System.out.println("Path from " + here + " to " + there + "; Recursion at " + u);
+        		List<Node> tmp = findPathRecursion(u,there,here);
+        		if (!tmp.isEmpty()) {
+        			path.addAll(tmp);
+        			break;
         		}
         	}
-        	
-        	for (int i = 0; i < 1000; i++)
-        		shortest.add(dir);
         }
         
-        return shortest;
+        return path;
     }
     
     /*
-     * Uses breadth-first search to find, store, and return the shortest path between two Locations.
+     * Uses breadth-first search to find and return the shortest path between two Locations.
      */
     private List<DirType> findPath(Node here, Node there) {
     	Node origin = here;
@@ -384,16 +330,16 @@ public class Map {
     	for (int i = 0; i < path.size()-1; i++) {
     		Node cur = path.get(i);
     		Node next = path.get(i+1);
-    		if (next == cur.north) {
+    		if (cur.north != null && next.equals(cur.north)) {
     			dirPath.add(DirType.North);
     			continue;
-    		} else if (next == cur.south) {
+    		} else if (cur.south != null && next.equals(cur.south)) {
     			dirPath.add(DirType.South);
     			continue;
-    		} else if (next == cur.east) {
+    		} else if (cur.east != null && next.equals(cur.east)) {
     			dirPath.add(DirType.East);
     			continue;
-    		} else {
+    		} else if (cur.west != null && next.equals(cur.west)){
     			dirPath.add(DirType.West);
     			continue;
     		}
