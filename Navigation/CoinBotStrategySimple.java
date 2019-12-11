@@ -2,6 +2,7 @@ package Navigation;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import LepinskiEngine.*;
@@ -54,15 +55,27 @@ public class CoinBotStrategySimple extends BotStrategy {
 	}
 	
 	private DirType randomDirection(List<DirType> possible) {
-		int i;
-		int tries = 0;
+		int i = 0;
+		Collections.shuffle(possible);
 		
-		do {
-			Random rand = new Random();
-			i = rand.nextInt(possible.size());
-			tries++;
-		} while (possible.get(i) == lastMove && tries < possible.size());
+		while (lastMove != null && possible.get(i) == reverse(lastMove) && i < possible.size()-1) {
+			i++;
+		}
 		
 		return possible.get(i);
+	}
+	
+	private DirType reverse(DirType dir) {
+		switch (dir) {
+		case North:
+			return DirType.South;
+		case South:
+			return DirType.North;
+		case East:
+			return DirType.East;
+		case West:
+			return DirType.West;
+		}
+		return null;
 	}
 }

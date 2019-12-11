@@ -217,14 +217,14 @@ public class Map {
     	//if (path.isEmpty())
     	//	path = crappyPath(h,t);
     	removeVisited();
-    	return toDirPath(findPathRecursion(h,t,null));
+    	return toDirPath(findPathRecursion(h,t));
     	//return findPath(h,t);
     }
     
     /*
      * Uses recursion to find and return the shortest path between two Locations.
      */
-    private List<Node> findPathRecursion(Node here, Node there, Node from) {
+    private List<Node> findPathRecursion(Node here, Node there) {
         //if (from == null)
         //	removeVisited();
     	
@@ -241,7 +241,7 @@ public class Map {
         	if (!u.visited) {
         		u.visited = true;
         		//System.out.println("Path from " + here + " to " + there + "; Recursion at " + u);
-        		List<Node> tmp = findPathRecursion(u,there,here);
+        		List<Node> tmp = findPathRecursion(u,there);
         		if (!tmp.isEmpty()) {
         			path.addAll(tmp);
         			path.add(0,here);
