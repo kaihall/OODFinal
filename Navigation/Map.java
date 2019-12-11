@@ -108,6 +108,7 @@ public class Map {
     	Node h = toNode(here);
     	Node t = toNode(there);
     	
+    	/*
     	if (paths.get(h).containsKey(t)) {
     		return paths.get(h).get(t);
     	} else if (paths.get(t).containsKey(h)) {
@@ -118,6 +119,9 @@ public class Map {
     		//return findPath(h, t, new ArrayList<Node>());
     		return findPath(h, t);
     	}
+    	*/
+    	
+    	return findPath(h,t);
     }
     
     /*
@@ -262,9 +266,9 @@ public class Map {
         		dir = DirType.West;
         	else if (there.y > here.y && here.north != nil)
         		dir = DirType.North;
-        	else if (there.y < here.y && here.south != nil)
+        	else
         		dir = DirType.South;
-        	
+        	/*
         	if (dir == null) {
         		List<DirType> dirxns = new ArrayList<DirType>();
         		Random rand = new Random();
@@ -281,9 +285,8 @@ public class Map {
 	        		dir = dirxns.get(i);
         		}
         	}
-        	
-        	for (int i = 0; i < 1000; i++)
-        		path.add(dir);
+        	*/
+        	path.add(dir);
         }
         return path;
     }
