@@ -33,25 +33,17 @@ public class CoinBotStrategySimple extends BotStrategy {
 		List<DirType> path = new ArrayList<DirType>();
 		DirType dir;
 		
-		if (onPath) {
-			path = map.getPath(map.getBotLocation(bot),dest);
-		} else {
-			int minLength = Integer.MAX_VALUE;
-			for (Location c : map.getCoinLocations()) {
-				List<DirType> tmp = map.getPath(map.getBotLocation(bot),c);
-				if (!tmp.isEmpty() && tmp.size() < minLength) {
-					minLength = tmp.size();
-					path = tmp;
-					dest = c;
-					onPath = true;
-				}
+		int minLength = Integer.MAX_VALUE;
+		for (Location c : map.getCoinLocations()) {
+			List<DirType> tmp = map.getPath(map.getBotLocation(bot),c);
+			if (!tmp.isEmpty() && tmp.size() < minLength) {
+				minLength = tmp.size();
+				path = tmp;
 			}
 		}
 		
 		if (path.isEmpty()) {
 			dir = randomDirection(map.getBotLocation(bot).getDirections());
-			dest = new Location(-1,-1);
-			onPath = false;
 		} else {
 			dir = path.get(0);
 		}
@@ -69,7 +61,7 @@ public class CoinBotStrategySimple extends BotStrategy {
 			Random rand = new Random();
 			i = rand.nextInt(possible.size());
 			tries++;
-		} while (possible.get(i) == lastMove || tries >= possible.size());
+		} while (possible.get(i) == lastMove && tries < possible.size());
 		
 		return possible.get(i);
 	}
