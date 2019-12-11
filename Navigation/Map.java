@@ -203,7 +203,12 @@ public class Map {
     	}
     	*/
     	
-    	return findPath(h,t);
+    	List<DirType> path = findPath(h,t);
+    	
+    	//if (path.isEmpty())
+    	//	path = crappyPath(h,t);
+    	
+    	return path;
     }
     
     /*
@@ -339,10 +344,6 @@ public class Map {
             }
           }
         }  
-        
-        if (path.isEmpty()) {
-        	return crappyPath(here,there);
-        }
         
         return path;
     }
@@ -532,36 +533,29 @@ public class Map {
     }
 
     private List<DirType> crappyPath(Node here, Node there) {
+    	// Check all of the Nodes around the destination and see if there's a path to any of them. If there is, return it.
     	List<DirType> path = new ArrayList<DirType>();
+    	Queue<Node> q = new LinkedList<Node>();
+    	q.add(there);
     	
-    	DirType dir = null;
-    	if (there.x > here.x && here.east != nil)
-    		dir = DirType.East;
-    	else if (there.x < here.x && here.west != nil)
-    		dir = DirType.West;
-    	else if (there.y > here.y && here.north != nil)
-    		dir = DirType.North;
-    	else
-    		dir = DirType.South;
-    	/*
-    	if (dir == null) {
-    		List<DirType> dirxns = new ArrayList<DirType>();
-    		Random rand = new Random();
-    		
-    		if (here.north != nil) dirxns.add(DirType.North);
-    		if (here.south != nil) dirxns.add(DirType.South);
-    		if (here.east != nil) dirxns.add(DirType.East);
-    		if (here.west != nil) dirxns.add(DirType.West);
-    		
-    		if (dirxns.isEmpty()) {
-    			dir = DirType.East;
+    	removeVisited();
+    	
+    	while (!q.isEmpty()) {
+    		Node s = q.remove();
+    		s.visited = true;
+    		if (s == here) {
+    			break;
+    		} else if (findPath(here,s).size() > 0) {
+    			return findPath(here,s);
     		} else {
-        		int i = rand.nextInt(dirxns.size());
-        		dir = dirxns.get(i);
+    			if (s.x > 0 && map.get(s.x-1).get(s.y) != null && !map.get(s.x-1).get(s.y).visited) q.add(map.get(s.x-1).get(s.y));
+    			if (s.x < max_x && map.get(s.x+1).get(s.y) != null && !map.get(s.x+1).get(s.y).visited) q.add(map.get(s.x+1).get(s.y));
+    			if (s.y > 0 && map.get(s.x).get(s.y-1) != null && !map.get(s.x).get(s.y-1).visited) q.add(map.get(s.x).get(s.y-1));
+    			if (s.y < max_y && map.get(s.x).get(s.y+1) != null && !map.get(s.x).get(s.y+1).visited) q.add(map.get(s.x).get(s.y+1));
     		}
+    		
+    		System.out.println("Looping");
     	}
-    	*/
-    	path.add(dir);
     	
     	return path;
     }
