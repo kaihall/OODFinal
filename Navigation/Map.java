@@ -211,17 +211,14 @@ public class Map {
     	}
     	*/
     	
-<<<<<<< Updated upstream
+
     	List<DirType> path = findPath(h,t);
     	
     	//if (path.isEmpty())
     	//	path = crappyPath(h,t);
-    	
-    	return path;
-=======
+
     	//return toDirPath(findPathRecursion(h,t,null));
     	return findPath(h,t);
->>>>>>> Stashed changes
     }
     
     /*
