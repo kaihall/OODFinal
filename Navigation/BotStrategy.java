@@ -17,8 +17,7 @@ public abstract class BotStrategy
                 //strats.add(new ScoutBotStrategy2());
                 break;
             case CoinBot:
-                //strats.add(new CoinBotStrategy());
-                strats.add(new CoinBotStrategySimple());
+                strats.add(new CoinBotStrategy());
                 break;
             case GhostBot:
             	strats.add(new GhostBotStrategy());
