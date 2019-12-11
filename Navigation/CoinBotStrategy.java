@@ -32,6 +32,7 @@ public class CoinBotStrategy extends BotStrategy
        List<DirType> retlist = map.getBotLocation(bot).getDirections(); //initializes it to a list that will at least give you a location to go to
        DirType direction;
        if(map.onCoin(bot)){
+    	   map.removeCoin(map.getBotLocation(bot));
            return new CommandCoin(bot); //I believe this is correct for picking up the coin?
        }
        else{

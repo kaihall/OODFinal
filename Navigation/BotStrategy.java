@@ -21,6 +21,7 @@ public abstract class BotStrategy
                 break;
             case GhostBot:
             	strats.add(new GhostBotStrategy());
+            	strats.add(new GhostBotScoutingStrategy());
             	break;
             default:
                 strats.add(new DummyStrategy());

@@ -3,6 +3,7 @@ package Navigation;
 import LepinskiEngine.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,22 +106,133 @@ public class Map {
     		paths.get(h).put(t,tmp);
     		return tmp;
     	} else {
-    		return findPath(h, t);
+    		return findPath(h, t, new ArrayList<Node>());
     	}
     }
     
     /*
-     * Uses BFS to find, store, and return the shortest path between two Locations.
+     * Uses recursion to find, store, and return the shortest path between two Locations.
      */
-    private List<DirType> findPath(Node here, Node there) {
-        List<DirType> path = new ArrayList<DirType>();
+    private List<DirType> findPath(Node here, Node there, List<Node> pathList) {
+        pathList.add(here);
         
-        Node start = here;
+        if (!paths.containsKey(here))
+        	paths.put(pathList.get(0), new HashMap<Node,List<DirType>>());	
+        paths.get(pathList.get(0)).put(here,toDirPath(pathList));
         
-        // TODO: stubbed
-        path.add(DirType.South);
+        List<DirType> n = new ArrayList<DirType>();
+        List<DirType> s = new ArrayList<DirType>();
+        List<DirType> e = new ArrayList<DirType>();
+        List<DirType> w = new ArrayList<DirType>();
         
-        return path;
+        if (here.north != null) {
+	        if (here.north == there) {
+	        	pathList.add(here.north);
+	        	return toDirPath(pathList);
+	        } else {
+	        	n = findPath(here.north,there,pathList);
+	        }
+        }
+        
+        if (here.south != null) {
+	        if (here.south == there) {
+	        	pathList.add(here.south);
+	        	return toDirPath(pathList);
+	        } else {
+	        	s = findPath(here.south,there,pathList);
+	        }
+        }
+        
+        if (here.east != null) {
+        	if (here.east == there) {
+            	pathList.add(here.east);
+            	return toDirPath(pathList);
+            } else {
+            	e = findPath(here.east,there,pathList);
+            }
+        }
+        
+        if (here.west != null) {
+	        if (here.west == there) {
+	        	pathList.add(here.west);
+	        	return toDirPath(pathList);
+	        } else {
+	            w = findPath(here.west,there,pathList);
+	        }
+        }
+        
+        List<DirType> shortest = new ArrayList<DirType>();
+        
+        if (shortest.size() == 0 || (n.size() != 0 && n.size() < shortest.size()))
+        	shortest = n;
+        if (shortest.size() == 0 || (s.size() != 0 && s.size() < shortest.size()))
+        	shortest = s;
+        if (shortest.size() == 0 || (e.size() != 0 && e.size() < shortest.size()))
+        	shortest = e;
+        if (shortest.size() == 0 || (w.size() != 0 && w.size() < shortest.size()))
+        	shortest = w;
+        
+        //Adds a type 1000 times to discourage going in random directions
+        if (shortest.isEmpty()) {
+        	DirType dir = null;
+        	if (there.x > here.x && here.east != nil)
+        		dir = DirType.East;
+        	else if (there.x < here.x && here.west != nil)
+        		dir = DirType.West;
+        	else if (there.y > here.y && here.north != nil)
+        		dir = DirType.North;
+        	else if (there.y < here.y && here.south != nil)
+        		dir = DirType.South;
+        	
+        	if (dir == null) {
+        		List<DirType> dirxns = new ArrayList<DirType>();
+        		Random rand = new Random();
+        		
+        		if (here.north != nil) dirxns.add(DirType.North);
+        		if (here.south != nil) dirxns.add(DirType.South);
+        		if (here.east != nil) dirxns.add(DirType.East);
+        		if (here.west != nil) dirxns.add(DirType.West);
+        		
+        		if (dirxns.isEmpty()) {
+        			dir = DirType.East;
+        		} else {
+	        		int i = rand.nextInt(dirxns.size());
+	        		dir = dirxns.get(i);
+        		}
+        	}
+        	
+        	for (int i = 0; i < 1000; i++)
+        		shortest.add(dir);
+        }
+        
+        return shortest;
+    }
+    
+    private List<DirType> toDirPath(List<Node> path) {
+    	
+    	List<DirType> dirPath = new ArrayList<DirType>();
+    	
+    	if (path.isEmpty()) return dirPath;
+    	
+    	for (int i = 0; i < path.size()-1; i++) {
+    		Node cur = path.get(i);
+    		Node next = path.get(i+1);
+    		if (next == cur.north) {
+    			dirPath.add(DirType.North);
+    			continue;
+    		} else if (next == cur.south) {
+    			dirPath.add(DirType.South);
+    			continue;
+    		} else if (next == cur.east) {
+    			dirPath.add(DirType.East);
+    			continue;
+    		} else {
+    			dirPath.add(DirType.West);
+    			continue;
+    		}
+    	}
+    	
+    	return dirPath;
     }
     
     /*
@@ -158,7 +270,7 @@ public class Map {
     }
     
     public int getLabel(int x, int y) {
-        if (x > max_x || y > max_y) return DNE;
+        if (x > max_x || y > max_y || x < 0 || y < 0) return DNE;
         return labels[x][y];
     }
     
@@ -199,7 +311,7 @@ public class Map {
         List<List<DirType>> paths = new ArrayList<List<DirType>>();
         
         for (Node u : coins)
-            paths.add(findPath(toNode(here),u));
+            paths.add(findPath(toNode(here),u,new ArrayList<Node>()));
         
         return paths;
     }
@@ -246,28 +358,32 @@ public class Map {
     	List<DirType> dirxns = loc.getDirections();
     	
     	// Set the Node's north neighbor
-    	if (dirxns.contains(DirType.North) && u.y > 0)
-    		u.north = map.get(u.x).get(u.y-1);
+    	Node n = (u.y > 0) ? map.get(u.x).get(u.y-1) : null;
+    	if (dirxns.contains(DirType.North) && n != null)
+    		u.north = n;
     	else
     		u.north = nil;
     	
     	// Set the Node's south neighbor
-    	if (dirxns.contains(DirType.South) && u.y < max_y)
-    		u.south = map.get(u.x).get(u.y+1);
+    	Node s = (u.y < max_y) ? map.get(u.x).get(u.y+1) : null;
+    	if (dirxns.contains(DirType.South) && s != null)
+    		u.south = s;
     	else
     		u.south = nil;
     	
     	// Set the Node's east neighbor
-    	if (dirxns.contains(DirType.East) && u.x < max_x)
-    		u.east = map.get(u.x+1).get(u.y);
+    	Node e = (u.x < max_x) ? map.get(u.x+1).get(u.y) : null;
+    	if (dirxns.contains(DirType.East) && e != null)
+    		u.east = e;
     	else
     		u.east = nil;
     	
     	// Set the Node's west neighbor
-    	if (dirxns.contains(DirType.West) && u.x > 0)
-    		u.west = map.get(u.x-1).get(u.y);
+    	Node w = (u.x > 0) ? map.get(u.x-1).get(u.y) : null;
+    	if (dirxns.contains(DirType.West) && w != null)
+    		u.west = w;
     	else
-    		u.east = nil;
+    		u.west = nil;
     	
     	
     	// Add the new Node to the map.
@@ -278,7 +394,11 @@ public class Map {
     }
     
     private Node toNode(Location loc) {
+    	if (map.get(loc.getX()).get(loc.getY()) == null)
+    		addLocation(loc);
+    	
     	Node u = map.get(loc.getX()).get(loc.getY());
+    	
     	return u;
     }
     

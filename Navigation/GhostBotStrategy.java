@@ -7,8 +7,8 @@ import LepinskiEngine.*;
 
 public class GhostBotStrategy extends BotStrategy {
 	
-	private boolean onPath;
-	private Location dest;
+	protected boolean onPath;
+	protected Location dest;
 	
 	public GhostBotStrategy() {
 		onPath = false;
@@ -73,7 +73,7 @@ public class GhostBotStrategy extends BotStrategy {
 		}
 	}
 	
-	private DirType headTowards(Location destination, Location botLocation) {
+	protected DirType headTowards(Location destination, Location botLocation) {
 		if (destination.getX() > botLocation.getX())
 			return DirType.East;
 		if (destination.getX() < botLocation.getX())
