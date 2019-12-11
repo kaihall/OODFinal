@@ -101,6 +101,88 @@ public class Map {
         }
     }
     
+    public int getLabel(Location loc) {
+        if (loc == null) return DNE;
+        return labels[loc.getX()][loc.getY()];
+    }
+    
+    public int getLabel(int x, int y) {
+        if (x > max_x || y > max_y || x < 0 || y < 0) return DNE;
+        return labels[x][y];
+    }
+    
+    public void setLabel(Location loc, int label) {
+        if (loc != null) 
+            labels[loc.getX()][loc.getY()] = label;
+    }
+    
+    public void setLabel(int x, int y, int label) {
+        if (x <= max_x && y <= max_y) {
+            labels[x][y] = label;
+        }
+    }
+    
+    public Location getBotLocation(Robot bot) {
+        return robots.get(bot.getID()).loc;
+    }
+    
+    public boolean onCoin(Robot bot) {
+        return coins.contains(robots.get(bot.getID()));
+    }
+    
+    public boolean onDiamond(Robot bot) {
+    	return diamonds.contains(robots.get(bot.getID()));
+    }
+    
+    public void removeCoin(Location loc) {
+    	coins.remove(toNode(loc));
+    	diamonds.remove(toNode(loc));
+    }
+    
+    public void removeCoin(Robot bot) {
+    	coins.remove(robots.get(bot.getID()));
+    	diamonds.remove(robots.get(bot.getID()));
+    }
+    
+    public List<List<DirType>> coinPaths(Location here) {
+        List<List<DirType>> paths = new ArrayList<List<DirType>>();
+        
+        for (Node u : coins)
+            paths.add(findPath(toNode(here),u));
+        
+        return paths;
+    }
+    
+    public List<Location> getCoinLocations() {
+    	ArrayList<Location> cL = new ArrayList<Location>();
+    	
+    	for (Node u : coins)
+    		cL.add(u.loc);
+    	
+    	return cL;
+    }
+    
+    public List<Location> getDiamondLocations() {
+    	ArrayList<Location> dL = new ArrayList<Location>();
+    	
+    	for (Node u : diamonds)
+    		dL.add(u.loc);
+    	
+    	return dL;
+    }
+    
+    public int getMaxX() {
+        return max_x;
+    }
+    
+    public int getMaxY() {
+        return max_y;
+    }
+    
+    public Location get(int x, int y) {
+    	return map.get(x).get(y).loc;
+    }
+    
     /*
      * Gets the stored path or attempts to find one if there is none.
      */
@@ -127,7 +209,7 @@ public class Map {
     /*
      * Uses recursion to find, store, and return the shortest path between two Locations.
      */
-    /*private List<DirType> findPathRec(Node here, Node there, List<Node> pathList) {
+    private List<DirType> findPathRecursion(Node here, Node there, List<Node> pathList) {
         pathList.add(here);
         
         if (!paths.containsKey(here))
@@ -144,7 +226,7 @@ public class Map {
 	        	pathList.add(here.north);
 	        	return toDirPath(pathList);
 	        } else {
-	        	n = findPath(here.north,there,pathList);
+	        	n = findPathRecursion(here.north,there,pathList);
 	        }
         }
         
@@ -153,7 +235,7 @@ public class Map {
 	        	pathList.add(here.south);
 	        	return toDirPath(pathList);
 	        } else {
-	        	s = findPath(here.south,there,pathList);
+	        	s = findPathRecursion(here.south,there,pathList);
 	        }
         }
         
@@ -162,7 +244,7 @@ public class Map {
             	pathList.add(here.east);
             	return toDirPath(pathList);
             } else {
-            	e = findPath(here.east,there,pathList);
+            	e = findPathRecursion(here.east,there,pathList);
             }
         }
         
@@ -171,7 +253,7 @@ public class Map {
 	        	pathList.add(here.west);
 	        	return toDirPath(pathList);
 	        } else {
-	            w = findPath(here.west,there,pathList);
+	            w = findPathRecursion(here.west,there,pathList);
 	        }
         }
         
@@ -220,7 +302,7 @@ public class Map {
         }
         
         return shortest;
-    }*/
+    }
     
     /*
      * Uses breadth-first search to find, store, and return the shortest path between two Locations.
@@ -288,6 +370,7 @@ public class Map {
         	*/
         	path.add(dir);
         }
+        
         return path;
     }
     
@@ -369,88 +452,6 @@ public class Map {
     	
     	//Return the new path.
     	return newPath;
-    }
-    
-    public int getLabel(Location loc) {
-        if (loc == null) return DNE;
-        return labels[loc.getX()][loc.getY()];
-    }
-    
-    public int getLabel(int x, int y) {
-        if (x > max_x || y > max_y || x < 0 || y < 0) return DNE;
-        return labels[x][y];
-    }
-    
-    public void setLabel(Location loc, int label) {
-        if (loc != null) 
-            labels[loc.getX()][loc.getY()] = label;
-    }
-    
-    public void setLabel(int x, int y, int label) {
-        if (x <= max_x && y <= max_y) {
-            labels[x][y] = label;
-        }
-    }
-    
-    public Location getBotLocation(Robot bot) {
-        return robots.get(bot.getID()).loc;
-    }
-    
-    public boolean onCoin(Robot bot) {
-        return coins.contains(robots.get(bot.getID()));
-    }
-    
-    public boolean onDiamond(Robot bot) {
-    	return diamonds.contains(robots.get(bot.getID()));
-    }
-    
-    public void removeCoin(Location loc) {
-    	coins.remove(toNode(loc));
-    	diamonds.remove(toNode(loc));
-    }
-    
-    public void removeCoin(Robot bot) {
-    	coins.remove(robots.get(bot.getID()));
-    	diamonds.remove(robots.get(bot.getID()));
-    }
-    
-    public List<List<DirType>> coinPaths(Location here) {
-        List<List<DirType>> paths = new ArrayList<List<DirType>>();
-        
-        for (Node u : coins)
-            paths.add(findPath(toNode(here),u));
-        
-        return paths;
-    }
-    
-    public List<Location> getCoinLocations() {
-    	ArrayList<Location> cL = new ArrayList<Location>();
-    	
-    	for (Node u : coins)
-    		cL.add(u.loc);
-    	
-    	return cL;
-    }
-    
-    public List<Location> getDiamondLocations() {
-    	ArrayList<Location> dL = new ArrayList<Location>();
-    	
-    	for (Node u : diamonds)
-    		dL.add(u.loc);
-    	
-    	return dL;
-    }
-    
-    public int getMaxX() {
-        return max_x;
-    }
-    
-    public int getMaxY() {
-        return max_y;
-    }
-    
-    public Location get(int x, int y) {
-    	return map.get(x).get(y).loc;
     }
     
     /*
