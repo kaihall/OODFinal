@@ -18,6 +18,7 @@ public abstract class BotStrategy
                 break;
             case CoinBot:
                 strats.add(new CoinBotStrategy());
+                strats.add(new CoinBotStrategySimple());
                 break;
             case GhostBot:
             	strats.add(new GhostBotStrategy());

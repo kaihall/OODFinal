@@ -1,7 +1,10 @@
 package Navigation;
 
 import LepinskiEngine.*;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.lang.Math.*;
 
 @SuppressWarnings("unused")
@@ -29,7 +32,7 @@ public class CoinBotStrategy extends BotStrategy
    public Command nextMove(Robot bot, List<Location> cur_vision, Map map) {
        map.update(cur_vision);
        int currentmin = 50;
-       List<DirType> retlist = map.getBotLocation(bot).getDirections(); //initializes it to a list that will at least give you a location to go to
+       List<DirType> retlist = new ArrayList<DirType>();
        DirType direction;
        if(map.onCoin(bot)){
     	   map.removeCoin(map.getBotLocation(bot));
@@ -47,8 +50,13 @@ public class CoinBotStrategy extends BotStrategy
                     retlist = map.getPath(map.getBotLocation(bot), c);
                }
            }
-           direction = retlist.get(0);
-       }
+           
+           if (retlist.isEmpty()) {
+        	   direction = randomDirection(map.getBotLocation(bot).getDirections());
+           } else {
+	           direction = retlist.get(0);
+           }
+	   }
        return new CommandMove(bot, direction);
    }
 
@@ -116,5 +124,13 @@ public class CoinBotStrategy extends BotStrategy
             }
             return dir.size() + unknownVal;
         }
-}
+    }
+    
+    private DirType randomDirection(List<DirType> possible) {
+		int i;
+		int tries = 0;
+		Random rand = new Random();
+		i = rand.nextInt(possible.size());
+		return possible.get(i);
+	}
 }
