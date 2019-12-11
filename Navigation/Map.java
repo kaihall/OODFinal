@@ -392,7 +392,7 @@ public class Map {
     		} else if (next == cur.east) {
     			dirPath.add(DirType.East);
     			continue;
-    		} else {
+    		} else if (next == cur.west){
     			dirPath.add(DirType.West);
     			continue;
     		}
